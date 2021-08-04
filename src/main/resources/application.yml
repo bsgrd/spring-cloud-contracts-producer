@@ -3,3 +3,8 @@ logging:
     org:
       springframework:
         cloud: DEBUG
+
+spring:
+  cloud.stream.bindings.output-out-0:
+    destination: users
+

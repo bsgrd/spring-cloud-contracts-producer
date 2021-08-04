@@ -2,21 +2,26 @@ package com.bsgrd.producer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 @Service
 public class UserProducer {
     private static final Logger logger = LoggerFactory.getLogger(UserProducer.class);
+    private final StreamBridge streamBridge;
+
+    public UserProducer(final StreamBridge streamBridge) {
+        this.streamBridge = streamBridge;
+    }
 
     @Bean
-    public Function<Message<User>, Message<User>> sendUser() {
+    public Consumer<String> receiveUser() {
         return user -> {
-            logger.info("Receiving user: {}", user.getPayload());
-            return user;
+            logger.info("Receiving user: {}", user);
+            this.streamBridge.send("users", user);
         };
     }
 
